@@ -69,7 +69,8 @@ int main(int argc, char **argv)
     vTimesTrack.resize(nImages);
 
     cout << endl << "-------" << endl;
-    cout << "Start processing sequence ... " << string(argv[argc-1]) << endl;
+    cout << "Start processing sequence ..." << endl;
+    //cout << "Start processing sequence ... " << string(argv[argc-1]) << endl;
     cout << "Images in the sequence: " << nImages << endl << endl;
 
     // Main loop
@@ -77,8 +78,8 @@ int main(int argc, char **argv)
     for(int ni=0; ni<nImages; ni++)
     {
         // Read image and depthmap from file
-        imRGB = cv::imread(string(argv[3])+"/"+vstrImageFilenamesRGB[ni],CV_LOAD_IMAGE_UNCHANGED);
-        imD = cv::imread(string(argv[3])+"/"+vstrImageFilenamesD[ni],CV_LOAD_IMAGE_UNCHANGED);
+        imRGB = cv::imread(string(argv[3])+"/"+vstrImageFilenamesRGB[ni],cv::IMREAD_UNCHANGED);
+        imD = cv::imread(string(argv[3])+"/"+vstrImageFilenamesD[ni],cv::IMREAD_UNCHANGED);
         double tframe = vTimestamps[ni];
 
         if(imRGB.empty())

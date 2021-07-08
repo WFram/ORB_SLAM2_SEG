@@ -130,7 +130,7 @@ void DynamicDetector::segmentPointCloudByKmeans ( const vector< Eigen::Vector2d 
 
     // Do Kmeans
     cv::Mat labels;
-    cv::TermCriteria criteria = cv::TermCriteria ( CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 10, 1.0 );
+    cv::TermCriteria criteria = cv::TermCriteria ( cv::TermCriteria::EPS + cv::TermCriteria::MAX_ITER, 10, 1.0 );
     cv::kmeans ( points, n_clusters, labels, criteria, 3, cv::KMEANS_PP_CENTERS, centers );//
 
     // Collect clusters.

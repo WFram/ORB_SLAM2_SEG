@@ -451,7 +451,7 @@ Plane* ViewerAR::DetectPlane(const cv::Mat Tcw, const std::vector<MapPoint*> &vM
         }
 
         cv::Mat u,w,vt;
-        cv::SVDecomp(A,w,u,vt,cv::SVD::MODIFY_A | cv::SVD::FULL_UV);
+        cv::SVDecomp(A,w,u,vt,cv::SVD::MODIFY_A | cv::SVD::FULL_UV); // OpenCV4.0?
 
         const float a = vt.at<float>(3,0);
         const float b = vt.at<float>(3,1);
@@ -538,7 +538,7 @@ void Plane::Recompute()
     A.resize(nPoints);
 
     cv::Mat u,w,vt;
-    cv::SVDecomp(A,w,u,vt,cv::SVD::MODIFY_A | cv::SVD::FULL_UV);
+    cv::SVDecomp(A,w,u,vt,cv::SVD::MODIFY_A | cv::SVD::FULL_UV); // // OpenCV4.0?
 
     float a = vt.at<float>(3,0);
     float b = vt.at<float>(3,1);

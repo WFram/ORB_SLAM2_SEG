@@ -1,5 +1,7 @@
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 cmake_minimum_required(VERSION 2.8...3.20)
-project(ORB_SLAM2)
+project(ORB_SLAM2_SEG)
 
 IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE Release)
@@ -28,13 +30,13 @@ endif()
 
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
-find_package(OpenCV 3.0 QUIET)
-if(NOT OpenCV_FOUND)
-   find_package(OpenCV 2.4.3 QUIET)
-   if(NOT OpenCV_FOUND)
-      message(FATAL_ERROR "OpenCV > 2.4.3 not found.")
-   endif()
-endif()
+find_package(OpenCV 4.2 REQUIRED)
+#if(NOT OpenCV_FOUND)
+#   find_package(OpenCV 2.4.3 QUIET)
+#   if(NOT OpenCV_FOUND)
+#      message(FATAL_ERROR "OpenCV > 2.4.3 not found.")
+#   endif()
+#endif()
 
 set (CAFFE_ROOT_DIR "./Thirdparty/caffe-segnet")
 find_package(CAFFE REQUIRED)
@@ -58,7 +60,9 @@ ${CAFFE_INCLUDE_DIRS}
 ${GLOG_INCLUDE_DIRS}
 -lboost_system
 /usr/local/include  
-/usr/local/cuda-11.3/include
+#/usr/local/cuda-11.3/include
+/usr/local/cuda-10.2/targets/x86_64-linux/include
+/usr/include/hdf5/serial
 /usr/include
 )
 
@@ -109,43 +113,43 @@ add_executable(rgbd_tum
 Examples/RGB-D/rgbd_tum.cc)
 target_link_libraries(rgbd_tum ${PROJECT_NAME})
 
-add_executable(rgbd_openloris
-Examples/RGB-D/rgbd_openloris.cc)
-target_link_libraries(rgbd_openloris ${PROJECT_NAME})
+#add_executable(rgbd_openloris
+#Examples/RGB-D/rgbd_openloris.cc)
+#target_link_libraries(rgbd_openloris ${PROJECT_NAME})
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Stereo)
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Stereo)
 
-add_executable(stereo_kitti
-Examples/Stereo/stereo_kitti.cc)
-target_link_libraries(stereo_kitti ${PROJECT_NAME})
+# add_executable(stereo_kitti
+# Examples/Stereo/stereo_kitti.cc)
+# target_link_libraries(stereo_kitti ${PROJECT_NAME})
 
-add_executable(stereo_euroc
-Examples/Stereo/stereo_euroc.cc)
-target_link_libraries(stereo_euroc ${PROJECT_NAME})
+# add_executable(stereo_euroc
+# Examples/Stereo/stereo_euroc.cc)
+# target_link_libraries(stereo_euroc ${PROJECT_NAME})
 
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Monocular)
 
-add_executable(mono_tum
-Examples/Monocular/mono_tum.cc)
-target_link_libraries(mono_tum ${PROJECT_NAME})
+# add_executable(mono_tum
+# Examples/Monocular/mono_tum.cc)
+# target_link_libraries(mono_tum ${PROJECT_NAME})
 
 add_executable(mono_kitti
 Examples/Monocular/mono_kitti.cc)
 target_link_libraries(mono_kitti ${PROJECT_NAME})
 
-add_executable(mono_euroc
-Examples/Monocular/mono_euroc.cc)
-target_link_libraries(mono_euroc ${PROJECT_NAME})
+#add_executable(mono_euroc
+#Examples/Monocular/mono_euroc.cc)
+#target_link_libraries(mono_euroc ${PROJECT_NAME})
 
-add_executable(mono_openloris
-Examples/Monocular/mono_openloris.cc)
-target_link_libraries(mono_openloris ${PROJECT_NAME})
+# add_executable(mono_openloris
+# Examples/Monocular/mono_openloris.cc)
+# target_link_libraries(mono_openloris ${PROJECT_NAME})
 
-add_executable(mono_sber
-Examples/Monocular/mono_sber.cc)
-target_link_libraries(mono_sber ${PROJECT_NAME})
+# add_executable(mono_sber
+# Examples/Monocular/mono_sber.cc)
+# target_link_libraries(mono_sber ${PROJECT_NAME})
 
-add_executable(mono_zed2
-Examples/Monocular/mono_zed2.cc)
-target_link_libraries(mono_zed2 ${PROJECT_NAME})
+# add_executable(mono_zed2
+# Examples/Monocular/mono_zed2.cc)
+# target_link_libraries(mono_zed2 ${PROJECT_NAME})

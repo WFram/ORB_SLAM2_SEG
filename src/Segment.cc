@@ -49,24 +49,26 @@ Segment::Segment(const string &pascal_prototxt, const string &pascal_caffemodel,
     LUT_file = pascal_png;
 
     label_colours = cv::imread(LUT_file,1);
-    cv::cvtColor(label_colours, label_colours, CV_RGB2BGR);
+    cv::cvtColor(label_colours, label_colours, cv::COLOR_RGB2BGR); // OpenCV4.0?
 
     cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
 
-    bool bParse = ParseSegmentationParamFile(fSettings);
+//    bool bParse = ParseSegmentationParamFile(fSettings);
+    s_width = fSettings["Camera.width"];
+    s_height = fSettings["Camera.height"];
 
-    if(!bParse)
-    {
-        std::cerr << "**ERROR in the config file, the format is not correct**" << std::endl;
-        try
-        {
-            throw -1;
-        }
-        catch(exception &e)
-        {
+    // if(!bParse)
+    // {
+    //     std::cerr << "**ERROR in the config file, the format is not correct**" << std::endl;
+    //     try
+    //     {
+    //         throw -1;
+    //     }
+    //     catch(exception &e)
+    //     {
 
-        }
-    }
+    //     }
+    // }
     // std::cout << "Img width: " << s_width << " Img height: " << s_height << std::endl;
     mImgSegmentLatest=cv::Mat(s_height,s_width,CV_8UC1);
     
@@ -106,7 +108,7 @@ void Segment::Run()
             continue;
         if(!mImg.empty())
         {
-            //cout << "Wait for new RGB img time =" << endl;
+            cout << "Wait for new RGB img time =" << endl;
             if(mSkipIndex==SKIP_NUMBER)
             {
                 std::chrono::steady_clock::time_point t3 = std::chrono::steady_clock::now();
@@ -114,7 +116,7 @@ void Segment::Run()
                 mImgSegment=classifier->Predict(mImg, label_colours);
 
                 mImgSegment_color = mImgSegment.clone();
-                cv::cvtColor(mImgSegment,mImgSegment_color, CV_GRAY2BGR);
+                cv::cvtColor(mImgSegment,mImgSegment_color, cv::COLOR_GRAY2BGR);
 
                 LUT(mImgSegment_color, label_colours, mImgSegment_color_final);
                 cv::resize(mImgSegment, mImgSegment, cv::Size(s_width,s_height) );
@@ -195,31 +197,31 @@ void Segment::ProduceImgSegment()
     
 }
 
-bool Segment::ParseSegmentationParamFile(cv::FileStorage &fSettings)
-{
-    bool b_miss_params = false;
+// bool Segment::ParseSegmentationParamFile(cv::FileStorage &fSettings)
+// {
+//     bool b_miss_params = false;
 
-    cv::FileNode node = fSettings["Camera.width"];
-    if(!node.empty())
-    {
-        s_width = node.real();
-    }
-    else
-    {
-        std::cerr << "*Camera.width parameter doesn't exist or is not a real number*" << std::endl;
-        b_miss_params = true;
-    }
+//     cv::FileNode node = fSettings["Camera.width"];
+//     if(!node.empty())
+//     {
+//         s_width = node.real();
+//     }
+//     else
+//     {
+//         std::cerr << "*Camera.width parameter doesn't exist or is not a real number*" << std::endl;
+//         b_miss_params = true;
+//     }
 
-    node = fSettings["Camera.height"];
-    if(!node.empty())
-    {
-        s_height = node.real();
-    }
-    else
-    {
-        std::cerr << "*Camera.height parameter doesn't exist or is not a real number*" << std::endl;
-        b_miss_params = true;
-    }
-}
+//     node = fSettings["Camera.height"];
+//     if(!node.empty())
+//     {
+//         s_height = node.real();
+//     }
+//     else
+//     {
+//         std::cerr << "*Camera.height parameter doesn't exist or is not a real number*" << std::endl;
+//         b_miss_params = true;
+//     }
+// }
 
 }   //ORB_SLAM2

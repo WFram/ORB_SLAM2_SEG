@@ -328,7 +328,7 @@ void LocalMapping::CreateNewMapPoints()
                 A.row(3) = xn2.at<float>(1)*Tcw2.row(2)-Tcw2.row(1);
 
                 cv::Mat w,u,vt;
-                cv::SVD::compute(A,w,u,vt,cv::SVD::MODIFY_A| cv::SVD::FULL_UV);
+                cv::SVD::compute(A,w,u,vt,cv::SVD::MODIFY_A| cv::SVD::FULL_UV); // OpenCV4.0?
 
                 x3D = vt.row(3).t();
 

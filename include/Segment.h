@@ -59,7 +59,7 @@ public:
     int labeldata[20]={32,8,40,2,34,10,42,16,48,24,56,18,50,26,58,4,36,12,44,6};
 
     int s_width;
-    int s_height;  
+    int s_height;
 
     cv::Mat label_colours;
     Classifier* classifier;

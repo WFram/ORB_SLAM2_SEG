@@ -182,26 +182,26 @@ cv::Mat Tracking::GrabImageStereo(const cv::Mat &imRectLeft, const cv::Mat &imRe
     {
         if(mbRGB)
         {
-            cvtColor(mImGray,mImGray,CV_RGB2GRAY);
-            cvtColor(imGrayRight,imGrayRight,CV_RGB2GRAY);
+            cvtColor(mImGray,mImGray,cv::COLOR_RGB2GRAY);
+            cvtColor(imGrayRight,imGrayRight,cv::COLOR_RGB2GRAY);
         }
         else
         {
-            cvtColor(mImGray,mImGray,CV_BGR2GRAY);
-            cvtColor(imGrayRight,imGrayRight,CV_BGR2GRAY);
+            cvtColor(mImGray,mImGray,cv::COLOR_BGR2GRAY);
+            cvtColor(imGrayRight,imGrayRight,cv::COLOR_BGR2GRAY);
         }
     }
     else if(mImGray.channels()==4)
     {
         if(mbRGB)
         {
-            cvtColor(mImGray,mImGray,CV_RGBA2GRAY);
-            cvtColor(imGrayRight,imGrayRight,CV_RGBA2GRAY);
+            cvtColor(mImGray,mImGray,cv::COLOR_RGBA2GRAY);
+            cvtColor(imGrayRight,imGrayRight,cv::COLOR_RGBA2GRAY);
         }
         else
         {
-            cvtColor(mImGray,mImGray,CV_BGRA2GRAY);
-            cvtColor(imGrayRight,imGrayRight,CV_BGRA2GRAY);
+            cvtColor(mImGray,mImGray,cv::COLOR_BGRA2GRAY);
+            cvtColor(imGrayRight,imGrayRight,cv::COLOR_BGRA2GRAY);
         }
     }
 
@@ -221,16 +221,16 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB,const cv::Mat &imD, const d
     if(mImGray.channels()==3)
     {
         if(mbRGB)
-            cvtColor(mImGray,mImGray,CV_RGB2GRAY);
+            cvtColor(mImGray,mImGray,cv::COLOR_RGB2GRAY);
         else
-            cvtColor(mImGray,mImGray,CV_BGR2GRAY);
+            cvtColor(mImGray,mImGray,cv::COLOR_BGR2GRAY);
     }
     else if(mImGray.channels()==4)
     {
         if(mbRGB)
-            cvtColor(mImGray,mImGray,CV_RGBA2GRAY);
+            cvtColor(mImGray,mImGray,cv::COLOR_RGBA2GRAY);
         else
-            cvtColor(mImGray,mImGray,CV_BGRA2GRAY);
+            cvtColor(mImGray,mImGray,cv::COLOR_BGRA2GRAY);
     }
 
     if((fabs(mDepthMapFactor-1.0f)>1e-5) || imDepth.type()!=CV_32F)
@@ -251,16 +251,16 @@ cv::Mat Tracking::GrabImageMonocular(const cv::Mat &im, const double &timestamp)
     if(mImGray.channels()==3)
     {
         if(mbRGB)
-            cvtColor(mImGray,mImGray,CV_RGB2GRAY);
+            cvtColor(mImGray,mImGray,cv::COLOR_RGB2GRAY);
         else
-            cvtColor(mImGray,mImGray,CV_BGR2GRAY);
+            cvtColor(mImGray,mImGray,cv::COLOR_BGR2GRAY);
     }
     else if(mImGray.channels()==4)
     {
         if(mbRGB)
-            cvtColor(mImGray,mImGray,CV_RGBA2GRAY);
+            cvtColor(mImGray,mImGray,cv::COLOR_RGBA2GRAY);
         else
-            cvtColor(mImGray,mImGray,CV_BGRA2GRAY);
+            cvtColor(mImGray,mImGray,cv::COLOR_BGRA2GRAY);
     }
 
     if(mState==NOT_INITIALIZED || mState==NO_IMAGES_YET)
@@ -556,8 +556,8 @@ void Tracking::StereoInitialization()
         cout << "New map created with " << mpMap->MapPointsInMap() << " points" << endl;
 
         // Init KF will be add to LocalMap
-        // mpLocalMapper->InsertKeyFrame(pKFini);
-        mpDynamicCuller->InsertKeyFrame(pKFini);
+        mpLocalMapper->InsertKeyFrame(pKFini);
+        // mpDynamicCuller->InsertKeyFrame(pKFini);
         mLastFrame = Frame(mCurrentFrame);
         mnLastKeyFrameId=mCurrentFrame.mnId;
         mpLastKeyFrame = pKFini;
@@ -1015,7 +1015,7 @@ bool Tracking::NeedNewKeyFrame()
     // Local Mapping accept keyframes?
     bool bLocalMappingIdle = mpLocalMapper->AcceptKeyFrames();
     // K-means accept keyframes?
-    bool bDynamicsCullingIdle = mpDynamicCuller->AcceptKeyFrames();
+    // bool bDynamicsCullingIdle = mpDynamicCuller->AcceptKeyFrames();
     // Check how many "close" points are being tracked and how many could be potentially created.
     int nNonTrackedClose = 0;
     int nTrackedClose= 0;
@@ -1046,7 +1046,8 @@ bool Tracking::NeedNewKeyFrame()
     // Condition 1a: More than "MaxFrames" have passed from last keyframe insertion
     const bool c1a = mCurrentFrame.mnId>=mnLastKeyFrameId+mMaxFrames;
     // Condition 1b: More than "MinFrames" have passed and Local Mapping is idle
-    const bool c1b = (mCurrentFrame.mnId>=mnLastKeyFrameId+mMinFrames &&  bDynamicsCullingIdle);//bLocalMappingIdle);
+    // const bool c1b = (mCurrentFrame.mnId>=mnLastKeyFrameId+mMinFrames &&  bDynamicsCullingIdle);//bLocalMappingIdle);
+    const bool c1b = (mCurrentFrame.mnId>=mnLastKeyFrameId+mMinFrames &&  bLocalMappingIdle);
     //Condition 1c: tracking is weak
     const bool c1c =  mSensor!=System::MONOCULAR && (mnMatchesInliers<nRefMatches*0.25 || bNeedToInsertClose) ;
     // Condition 2: Few tracked points compared to reference keyframe. Lots of visual odometry compared to map matches.
@@ -1056,7 +1057,8 @@ bool Tracking::NeedNewKeyFrame()
     {
         // If the mapping accepts keyframes, insert keyframe.
         // Otherwise send a signal to interrupt BA
-        if(bDynamicsCullingIdle /*||bLocalMappingIdle*/)
+        // if(bDynamicsCullingIdle /*||bLocalMappingIdle*/)
+        if(bLocalMappingIdle)
         {
             return true;
         }
@@ -1065,7 +1067,8 @@ bool Tracking::NeedNewKeyFrame()
             // mpLocalMapper->InterruptBA();
             if(mSensor!=System::MONOCULAR)
             {
-                if(mpDynamicCuller->KeyframesInQueue()<3) // Adjust this parameters
+                // if(mpDynamicCuller->KeyframesInQueue()<3) // Adjust this parameters
+                if(mpLocalMapper->KeyframesInQueue()<3) // Adjust this parameters    
                     return true;
                 else
                     return false;
@@ -1150,8 +1153,8 @@ void Tracking::CreateNewKeyFrame()
         }
     }
     // Add new KF to Dynamics thread 
-    // mpLocalMapper->InsertKeyFrame(pKF);
-    mpDynamicCuller->InsertKeyFrame(pKF);
+    mpLocalMapper->InsertKeyFrame(pKF);
+    // mpDynamicCuller->InsertKeyFrame(pKF);
 
     mpLocalMapper->SetNotStop(false);
 

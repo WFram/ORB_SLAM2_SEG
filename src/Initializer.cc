@@ -260,7 +260,7 @@ cv::Mat Initializer::ComputeH21(const vector<cv::Point2f> &vP1, const vector<cv:
 
     cv::Mat u,w,vt;
 
-    cv::SVDecomp(A,w,u,vt,cv::SVD::MODIFY_A | cv::SVD::FULL_UV);
+    cv::SVDecomp(A,w,u,vt,cv::SVD::MODIFY_A | cv::SVD::FULL_UV); // OpenCV4.0?
 
     return vt.row(8).reshape(0, 3);
 }
@@ -291,11 +291,11 @@ cv::Mat Initializer::ComputeF21(const vector<cv::Point2f> &vP1,const vector<cv::
 
     cv::Mat u,w,vt;
 
-    cv::SVDecomp(A,w,u,vt,cv::SVD::MODIFY_A | cv::SVD::FULL_UV);
+    cv::SVDecomp(A,w,u,vt,cv::SVD::MODIFY_A | cv::SVD::FULL_UV); // OpenCV4.0?
 
     cv::Mat Fpre = vt.row(8).reshape(0, 3);
 
-    cv::SVDecomp(Fpre,w,u,vt,cv::SVD::MODIFY_A | cv::SVD::FULL_UV);
+    cv::SVDecomp(Fpre,w,u,vt,cv::SVD::MODIFY_A | cv::SVD::FULL_UV); // OpenCV4.0?
 
     w.at<float>(2)=0;
 
@@ -585,7 +585,7 @@ bool Initializer::ReconstructH(vector<bool> &vbMatchesInliers, cv::Mat &H21, cv:
     cv::Mat A = invK*H21*K;
 
     cv::Mat U,w,Vt,V;
-    cv::SVD::compute(A,w,U,Vt,cv::SVD::FULL_UV);
+    cv::SVD::compute(A,w,U,Vt,cv::SVD::FULL_UV); // OpenCV4.0?
     V=Vt.t();
 
     float s = cv::determinant(U)*cv::determinant(Vt);
@@ -741,7 +741,7 @@ void Initializer::Triangulate(const cv::KeyPoint &kp1, const cv::KeyPoint &kp2, 
     A.row(3) = kp2.pt.y*P2.row(2)-P2.row(1);
 
     cv::Mat u,w,vt;
-    cv::SVD::compute(A,w,u,vt,cv::SVD::MODIFY_A| cv::SVD::FULL_UV);
+    cv::SVD::compute(A,w,u,vt,cv::SVD::MODIFY_A| cv::SVD::FULL_UV); // OpenCV4.0?
     x3D = vt.row(3).t();
     x3D = x3D.rowRange(0,3)/x3D.at<float>(3);
 }

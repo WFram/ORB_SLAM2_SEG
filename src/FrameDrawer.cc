@@ -76,7 +76,7 @@ cv::Mat FrameDrawer::DrawFrame()
     } // destroy scoped mutex -> release mutex
 
     if(im.channels()<3) //this should be always true
-        cvtColor(im,im,CV_GRAY2BGR);
+        cvtColor(im,im,cv::COLOR_GRAY2BGR);
 
     //Draw
     if(state==Tracking::NOT_INITIALIZED) //INITIALIZING
@@ -176,7 +176,7 @@ cv::Mat FrameDrawer::DrawKeyFrame()
             mState=Tracking::NO_IMAGES_YET;
         
         mImKF.copyTo(im);
-        cvtColor(im,im,CV_GRAY2BGR);
+        cvtColor(im,im,cv::COLOR_GRAY2BGR);
 
         if(mState==Tracking::NOT_INITIALIZED)
         {
@@ -200,7 +200,7 @@ cv::Mat FrameDrawer::DrawKeyFrame()
     } // destroy scoped mutex -> release mutex
 
     if(im.channels()<3) //this should be always true
-        cvtColor(im,im,CV_GRAY2BGR);
+        cvtColor(im,im,cv::COLOR_GRAY2BGR);
 
     //Draw
     if(state==Tracking::NOT_INITIALIZED) //INITIALIZING

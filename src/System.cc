@@ -30,7 +30,7 @@ namespace ORB_SLAM2
 {
 
 System::System(const string &strVocFile, const string &strSettingsFile, const string &pascal_prototxt, const string &pascal_caffemodel, const string &pascal_png,
-               const eSensor sensor,const bool bUseViewer):mSensor(sensor), mpViewer(static_cast<Viewer*>(NULL)), mbReset(false),mbActivateLocalizationMode(false),
+               const eSensor sensor, const bool bUseViewer):mSensor(sensor), mpViewer(static_cast<Viewer*>(NULL)), mbReset(false),mbActivateLocalizationMode(false),
         mbDeactivateLocalizationMode(false)
 {
     // Output welcome message
@@ -79,12 +79,10 @@ System::System(const string &strVocFile, const string &strSettingsFile, const st
     //Create Drawers. These are used by the Viewer
     mpFrameDrawer = new FrameDrawer(mpMap);
     mpMapDrawer = new MapDrawer(mpMap, strSettingsFile);
-
     //Initialize the Tracking thread
     //(it will live in the main thread of execution, the one that called this constructor)
     mpTracker = new Tracking(this, mpVocabulary, mpFrameDrawer, mpMapDrawer,
                              mpMap, mpKeyFrameDatabase, strSettingsFile, mSensor);
-
     //Initialize the Local Mapping thread and launch
     mpLocalMapper = new LocalMapping(mpMap, mSensor==MONOCULAR);
     mptLocalMapping = new thread(&ORB_SLAM2::LocalMapping::Run,mpLocalMapper);
@@ -94,14 +92,14 @@ System::System(const string &strVocFile, const string &strSettingsFile, const st
     mptLoopClosing = new thread(&ORB_SLAM2::LoopClosing::Run, mpLoopCloser);
 
     // Initialize the Semantic segmentation thread and launch
-    mpSegment =new Segment( pascal_prototxt, pascal_caffemodel, pascal_png, strSettingsFile);
-    mptSegment =new thread(&ORB_SLAM2::Segment::Run,mpSegment);
+    mpSegment = new Segment(pascal_prototxt, pascal_caffemodel, pascal_png, strSettingsFile);
+    mptSegment = new thread(&ORB_SLAM2::Segment::Run,mpSegment);
 
     // Initialize the Dynmacic Culling thread and launch
-    mpDynamiCulling = new DynamicCulling();
-    mptDynamicCulling = new thread(&ORB_SLAM2::DynamicCulling::Run,mpDynamiCulling);
+    // mpDynamiCulling = new DynamicCulling();
+    // mptDynamicCulling = new thread(&ORB_SLAM2::DynamicCulling::Run,mpDynamiCulling);
 
-    mpDynamicsDetectors = new DynamicDetector();
+    // mpDynamicsDetectors = new DynamicDetector();
     
     //Initialize the Viewer thread and launch
     if(bUseViewer)
@@ -110,7 +108,6 @@ System::System(const string &strVocFile, const string &strSettingsFile, const st
         mptViewer = new thread(&Viewer::Run, mpViewer);
         mpTracker->SetViewer(mpViewer);
     }
-
     //Set pointers between threads
     mpTracker->SetLocalMapper(mpLocalMapper);
     mpTracker->SetLoopClosing(mpLoopCloser);
@@ -124,13 +121,13 @@ System::System(const string &strVocFile, const string &strSettingsFile, const st
     mpLoopCloser->SetTracker(mpTracker);
     mpLoopCloser->SetLocalMapper(mpLocalMapper);
 
-    mpDynamiCulling->SetTracker(mpTracker);
-    mpDynamiCulling->SetLocalMapper(mpLocalMapper);
-    mpDynamiCulling->SetDynamicDetector(mpDynamicsDetectors);
+    // mpDynamiCulling->SetTracker(mpTracker);
+    // mpDynamiCulling->SetLocalMapper(mpLocalMapper);
+    // mpDynamiCulling->SetDynamicDetector(mpDynamicsDetectors);
     
-    mpDynamicsDetectors->SetMapper(mpMap);
+    //mpDynamicsDetectors->SetMapper(mpMap);
 
-    mpSegment->SetTracker(mpTracker);
+    //mpSegment->SetTracker(mpTracker);
 }
 
 cv::Mat System::TrackStereo(const cv::Mat &imLeft, const cv::Mat &imRight, const double &timestamp)
@@ -322,7 +319,7 @@ void System::Shutdown()
 {
     mpLocalMapper->RequestFinish();
     mpLoopCloser->RequestFinish();
-    mpDynamiCulling->RequestFinish();
+    //mpDynamiCulling->RequestFinish();
     mpSegment->RequestFinish();
 
     if(mpViewer)
