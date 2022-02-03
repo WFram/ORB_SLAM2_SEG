@@ -96,10 +96,10 @@ System::System(const string &strVocFile, const string &strSettingsFile, const st
     mptSegment = new thread(&ORB_SLAM2::Segment::Run,mpSegment);
 
     // Initialize the Dynmacic Culling thread and launch
-    // mpDynamiCulling = new DynamicCulling();
-    // mptDynamicCulling = new thread(&ORB_SLAM2::DynamicCulling::Run,mpDynamiCulling);
+    mpDynamiCulling = new DynamicCulling();
+    mptDynamicCulling = new thread(&ORB_SLAM2::DynamicCulling::Run,mpDynamiCulling);
 
-    // mpDynamicsDetectors = new DynamicDetector();
+    mpDynamicsDetectors = new DynamicDetector();
     
     //Initialize the Viewer thread and launch
     if(bUseViewer)
@@ -121,13 +121,13 @@ System::System(const string &strVocFile, const string &strSettingsFile, const st
     mpLoopCloser->SetTracker(mpTracker);
     mpLoopCloser->SetLocalMapper(mpLocalMapper);
 
-    // mpDynamiCulling->SetTracker(mpTracker);
-    // mpDynamiCulling->SetLocalMapper(mpLocalMapper);
-    // mpDynamiCulling->SetDynamicDetector(mpDynamicsDetectors);
+    mpDynamiCulling->SetTracker(mpTracker);
+    mpDynamiCulling->SetLocalMapper(mpLocalMapper);
+    mpDynamiCulling->SetDynamicDetector(mpDynamicsDetectors);
     
-    //mpDynamicsDetectors->SetMapper(mpMap);
+    mpDynamicsDetectors->SetMapper(mpMap);
 
-    //mpSegment->SetTracker(mpTracker);
+    mpSegment->SetTracker(mpTracker);
 }
 
 cv::Mat System::TrackStereo(const cv::Mat &imLeft, const cv::Mat &imRight, const double &timestamp)
@@ -319,7 +319,7 @@ void System::Shutdown()
 {
     mpLocalMapper->RequestFinish();
     mpLoopCloser->RequestFinish();
-    //mpDynamiCulling->RequestFinish();
+    mpDynamiCulling->RequestFinish();
     mpSegment->RequestFinish();
 
     if(mpViewer)
